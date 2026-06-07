@@ -2,32 +2,238 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Calendario Ambiental Firebase PRO</title>
+<title>Calendario Ambiental Firebase PRO UI Premium</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body{font-family:Arial;background:#0c4d47;margin:0;padding:20px}
-.container{max-width:1200px;margin:auto;background:#f5f1e7;border-radius:20px;overflow:hidden}
-.header{background:#0d6057;color:white;padding:25px;text-align:center}
-.layout{display:grid;grid-template-columns:300px 1fr}
-.sidebar{background:#0d6057;color:white;padding:20px}
-.calendar{padding:20px}
-.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
-.day{background:white;border-radius:10px;padding:10px;min-height:100px;border:2px solid #ddd;cursor:pointer}
-.day:hover{transform:scale(1.02)}
-.panel{background:white;padding:20px;border-radius:20px;margin-top:20px;display:none}
-.panel.active{display:block}
-input,textarea,select{width:100%;padding:10px;margin-top:10px;border-radius:8px;border:1px solid #ccc}
-button{padding:10px;border:none;border-radius:8px;cursor:pointer;margin-top:10px}
-.event{background:#2e7d32;color:white;padding:5px;border-radius:6px;margin-top:5px;font-size:12px}
-.gallery{display:flex;gap:10px;overflow:auto;margin-top:15px}
-.gallery img{height:180px;border-radius:10px}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;justify-content:center;align-items:center;padding:20px}
-.modalbox{background:white;padding:20px;border-radius:20px;width:90%;max-width:800px;max-height:90vh;overflow:auto}
-img.main{width:100%;border-radius:10px;margin-top:15px}
-iframe{width:100%;height:350px;border:none;border-radius:10px;margin-top:15px}
-.status{background:#dcedc8;color:#1b5e20;padding:10px;border-radius:10px;margin-bottom:15px;font-weight:bold}
-@media(max-width:900px){.layout{grid-template-columns:1fr}}
+*{box-sizing:border-box}
+
+body{
+font-family:Arial;
+background:#0c4d47;
+margin:0;
+padding:14px;
+}
+
+.container{
+max-width:880px;
+margin:auto;
+background:#f5f1e7;
+border-radius:18px;
+overflow:hidden;
+box-shadow:0 8px 25px rgba(0,0,0,.18);
+}
+
+.header{
+background:#0d6057;
+color:white;
+padding:18px;
+text-align:center;
+}
+
+.layout{
+display:grid;
+grid-template-columns:220px 1fr;
+}
+
+.sidebar{
+background:#0d6057;
+color:white;
+padding:14px;
+}
+
+.calendar{
+padding:14px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:7px;
+}
+
+.day{
+background:white;
+border-radius:10px;
+padding:8px;
+min-height:78px;
+border:2px solid #ddd;
+cursor:pointer;
+transition:.2s;
+font-size:13px;
+}
+
+.day:hover{
+transform:scale(1.02);
+border-color:#0d6057;
+}
+
+.panel{
+background:white;
+padding:14px;
+border-radius:16px;
+margin-top:16px;
+display:none;
+}
+
+.panel.active{
+display:block;
+}
+
+input,textarea,select{
+width:100%;
+padding:9px;
+margin-top:8px;
+border-radius:8px;
+border:1px solid #ccc;
+font-size:13px;
+}
+
+button{
+padding:9px 12px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+margin-top:8px;
+font-size:13px;
+background:#0d6057;
+color:white;
+}
+
+.event{
+background:#2e7d32;
+color:white;
+padding:4px;
+border-radius:6px;
+margin-top:4px;
+font-size:11px;
+}
+
+.modal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.7);
+display:none;
+justify-content:center;
+align-items:center;
+padding:18px;
+}
+
+.modalbox{
+background:white;
+padding:18px;
+border-radius:18px;
+width:90%;
+max-width:700px;
+max-height:90vh;
+overflow:auto;
+}
+
+img.main{
+width:60%;
+display:block;
+margin:14px auto;
+border-radius:14px;
+box-shadow:0 4px 12px rgba(0,0,0,.2);
+}
+
+.carousel-container{
+position:relative;
+margin-top:14px;
+}
+
+.gallery{
+display:flex;
+gap:12px;
+overflow-x:auto;
+scroll-behavior:smooth;
+padding:8px 40px;
+}
+
+.gallery::-webkit-scrollbar{
+height:6px;
+}
+
+.gallery::-webkit-scrollbar-thumb{
+background:#0d6057;
+border-radius:20px;
+}
+
+.gallery img{
+height:135px;
+border-radius:12px;
+object-fit:cover;
+flex-shrink:0;
+box-shadow:0 4px 10px rgba(0,0,0,.18);
+}
+
+.carousel-btn{
+position:absolute;
+top:50%;
+transform:translateY(-50%);
+width:34px;
+height:34px;
+border-radius:50%;
+background:#0d6057;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:18px;
+z-index:10;
+}
+
+.carousel-left{
+left:0;
+}
+
+.carousel-right{
+right:0;
+}
+
+iframe{
+width:100%;
+height:300px;
+border:none;
+border-radius:10px;
+margin-top:12px;
+}
+
+.status{
+background:#dcedc8;
+color:#1b5e20;
+padding:8px;
+border-radius:8px;
+margin-bottom:12px;
+font-weight:bold;
+font-size:13px;
+}
+
+@media(max-width:900px){
+.layout{grid-template-columns:1fr}
+.grid{grid-template-columns:repeat(2,1fr)}
+img.main{width:100%}
+.gallery img{height:120px}
+}
+
+.modalbox h2{
+color:#0d6057;
+margin-bottom:10px;
+}
+
+.modalbox p{
+line-height:1.5;
+margin-top:10px;
+}
+
+.gallery{
+align-items:center;
+}
+
+.gallery img:hover{
+transform:scale(1.03);
+transition:.2s;
+}
+
 </style>
 
 </head>
@@ -61,7 +267,7 @@ iframe{width:100%;height:350px;border:none;border-radius:10px;margin-top:15px}
 
 <div class="calendar">
 
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
 <button onclick="change(-1)">◀</button>
 <h2 id="month"></h2>
 <button onclick="change(1)">▶</button>
@@ -128,19 +334,12 @@ updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-
-  apiKey: "AIzaSyBAVbML_9SysLKpkK_dMAnipQ2emKQCBZU",
-
-  authDomain: "calendario-ambiental-48d97.firebaseapp.com",
-
-  projectId: "calendario-ambiental-48d97",
-
-  storageBucket: "calendario-ambiental-48d97.firebasestorage.app",
-
-  messagingSenderId: "956848454278",
-
-  appId: "1:956848454278:web:c69d7eba84ccfc87806f07"
-
+apiKey: "AIzaSyBAVbML_9SysLKpkK_dMAnipQ2emKQCBZU",
+authDomain: "calendario-ambiental-48d97.firebaseapp.com",
+projectId: "calendario-ambiental-48d97",
+storageBucket: "calendario-ambiental-48d97.firebasestorage.app",
+messagingSenderId: "956848454278",
+appId: "1:956848454278:web:c69d7eba84ccfc87806f07"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -153,9 +352,7 @@ let editId=null;
 let events=[];
 
 async function loadEvents(){
-
 events=[];
-
 const querySnapshot = await getDocs(collection(db,"eventos"));
 
 querySnapshot.forEach((d)=>{
@@ -166,7 +363,6 @@ id:d.id,
 });
 
 render();
-
 }
 
 function render(){
@@ -184,7 +380,7 @@ evs.innerHTML="";
 events.forEach((e,i)=>{
 
 evs.innerHTML+=`
-<div style='background:#2e7d32;padding:10px;border-radius:10px;margin-bottom:10px'>
+<div style='background:#2e7d32;padding:8px;border-radius:10px;margin-bottom:8px'>
 <strong>${e.title}</strong><br>
 <small>${e.date}</small><br>
 <button onclick='openEvent(${i})'>Ver</button>
@@ -193,7 +389,6 @@ evs.innerHTML+=`
 });
 
 const first=new Date(current.getFullYear(),current.getMonth(),1).getDay();
-
 const total=new Date(current.getFullYear(),current.getMonth()+1,0).getDate();
 
 for(let i=0;i<first;i++) cal.innerHTML+="<div></div>";
@@ -211,15 +406,11 @@ html+="<div class='event'>"+x.title+"</div>";
 const div=document.createElement("div");
 
 div.className="day";
-
 div.innerHTML=html;
-
 div.onclick=()=>select(date);
 
 cal.appendChild(div);
-
 }
-
 }
 
 window.select=function(date){
@@ -243,20 +434,17 @@ if(adminMode){
 adminButtons=`
 <button onclick='edit("${x.id}")'>Editar</button>
 <button onclick='removeEvent("${x.id}")' style='background:#c62828;color:white'>Eliminar</button>`;
-
 }
 
 area.innerHTML+=`
-<div style='background:#f4faf7;padding:15px;border-radius:10px;margin-top:10px'>
+<div style='background:#f4faf7;padding:12px;border-radius:10px;margin-top:8px'>
 <strong>${x.title}</strong><br><br>
 <button onclick='showEvent("${x.id}")'>Ver información</button>
 ${adminButtons}
 </div>`;
-
 });
 
 document.getElementById("date").value=date;
-
 }
 
 window.admin=function(){
@@ -274,144 +462,15 @@ document.getElementById("logout").style.display="inline-block";
 alert("Modo administrador activado");
 
 }else{
-
 alert("Credenciales incorrectas");
-
 }
-
 }
 
 window.logout=function(){
-
 adminMode=false;
-
 document.getElementById("tools").style.display="none";
 document.getElementById("logout").style.display="none";
-
 alert("Sesión cerrada");
-
-}
-
-function compress(file,max=1200,quality=.6){
-
-return new Promise(resolve=>{
-
-const img=new Image();
-const reader=new FileReader();
-
-reader.onload=e=>{
-
-img.onload=()=>{
-
-const c=document.createElement("canvas");
-
-let w=img.width,h=img.height;
-
-if(w>max){
-h*=max/w;
-w=max;
-}
-
-c.width=w;
-c.height=h;
-
-c.getContext("2d").drawImage(img,0,0,w,h);
-
-resolve(c.toDataURL("image/jpeg",quality));
-
-};
-
-img.src=e.target.result;
-
-};
-
-reader.readAsDataURL(file);
-
-});
-
-}
-
-window.save=async function(){
-
-const title=document.getElementById("title").value;
-const date=document.getElementById("date").value;
-const type=document.getElementById("type").value;
-const description=document.getElementById("description").value;
-const link=document.getElementById("link").value;
-
-if(!title || !date || !description){
-
-alert("Completa todos los campos");
-return;
-
-}
-
-let main="";
-
-const mainFile=document.getElementById("mainImage").files[0];
-
-if(mainFile){
-
-main=await compress(mainFile,1200,.6);
-
-}
-
-const gallery=[];
-
-const files=[...document.getElementById("gallery").files].slice(0,5);
-
-for(let f of files){
-
-gallery.push(await compress(f,800,.5));
-
-}
-
-const obj={title,date,type,description,link,main,gallery};
-
-if(editId===null){
-
-await addDoc(collection(db,"eventos"),obj);
-
-}else{
-
-await updateDoc(doc(db,"eventos",editId),obj);
-
-editId=null;
-
-}
-
-await loadEvents();
-
-select(date);
-
-alert("Evento guardado online");
-
-}
-
-window.edit=function(id){
-
-const x=events.find(e=>e.id===id);
-
-title.value=x.title;
-date.value=x.date;
-type.value=x.type;
-description.value=x.description;
-link.value=x.link||"";
-
-editId=id;
-
-}
-
-window.removeEvent=async function(id){
-
-if(confirm("¿Eliminar evento?")){
-
-await deleteDoc(doc(db,"eventos",id));
-
-await loadEvents();
-
-}
-
 }
 
 window.showEvent=function(id){
@@ -422,14 +481,24 @@ let gallery="";
 
 if(x.gallery && x.gallery.length){
 
-gallery="<div class='gallery'>";
+gallery=`
+<div class='carousel-container'>
+
+<button class='carousel-btn carousel-left'
+onclick='moveGallery(-1)'>❮</button>
+
+<div class='gallery' id='galleryTrack'>`;
 
 x.gallery.forEach(g=>{
 gallery+="<img src='"+g+"'>";
 });
 
-gallery+="</div>";
+gallery+=`</div>
 
+<button class='carousel-btn carousel-right'
+onclick='moveGallery(1)'>❯</button>
+
+</div>`;
 }
 
 let main="";
@@ -449,9 +518,7 @@ media="<iframe src='"+x.link.replace('watch?v=','embed/')+"'></iframe>";
 }else{
 
 media="<a href='"+x.link+"' target='_blank'><button>Abrir Recurso</button></a>";
-
 }
-
 }
 
 document.getElementById("modalbox").innerHTML=`
@@ -465,21 +532,22 @@ ${media}
 `;
 
 document.getElementById("modal").style.display="flex";
+}
 
+window.moveGallery=function(direction){
+
+const gallery=document.getElementById("galleryTrack");
+
+gallery.scrollLeft += direction * 220;
 }
 
 window.closeModal=function(){
-
 document.getElementById("modal").style.display="none";
-
 }
 
 window.change=function(v){
-
 current.setMonth(current.getMonth()+v);
-
 render();
-
 }
 
 loadEvents();
