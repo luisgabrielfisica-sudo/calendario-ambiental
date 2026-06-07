@@ -209,10 +209,52 @@ font-size:13px;
 }
 
 @media(max-width:900px){
-.layout{grid-template-columns:1fr}
-.grid{grid-template-columns:repeat(2,1fr)}
-img.main{width:100%}
-.gallery img{height:120px}
+
+.layout{
+grid-template-columns:1fr;
+}
+
+.calendar{
+overflow-x:auto;
+}
+
+.grid{
+grid-template-columns:repeat(7,minmax(45px,1fr));
+gap:4px;
+min-width:350px;
+}
+
+.day{
+min-height:58px;
+padding:4px;
+font-size:10px;
+border-radius:8px;
+}
+
+.event{
+font-size:7px;
+padding:2px;
+margin-top:2px;
+}
+
+img.main{
+width:85%;
+}
+
+.gallery{
+padding:6px 30px;
+}
+
+.gallery img{
+height:95px;
+}
+
+.carousel-btn{
+width:28px;
+height:28px;
+font-size:14px;
+}
+
 }
 
 .modalbox h2{
