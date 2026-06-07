@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang='es'>
+<head>
+<meta charset='UTF-8'>
+<title>Calendario Ambiental Firebase</title>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<style>
+body{font-family:Arial;background:#0c4d47;margin:0;padding:20px}
+.container{max-width:1200px;margin:auto;background:#f5f1e7;border-radius:20px;padding:30px}
+</style>
+</head>
+<body>
+<div class='container'>
+<h1>🌿 Calendario Ambiental Firebase</h1>
+<p>Firebase conectado correctamente.</p>
+
+<script type='module'>
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyBAVbML_9SysLKpkK_dMAnipQ2emKQCBZU",
+authDomain: "calendario-ambiental-48d97.firebaseapp.com",
+projectId: "calendario-ambiental-48d97",
+storageBucket: "calendario-ambiental-48d97.firebasestorage.app",
+messagingSenderId: "956848454278",
+appId: "1:956848454278:web:c69d7eba84ccfc87806f07"
+};
+
+initializeApp(firebaseConfig);
+
+console.log("Firebase conectado");
+</script>
+
+</div>
+</body>
+</html>
