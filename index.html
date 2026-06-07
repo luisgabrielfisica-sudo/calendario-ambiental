@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendario Ambiental PRO</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+margin:0;
+padding:10px;
+font-family:Arial,sans-serif;
+background:#0c4d47;
+}
+
+.container{
+max-width:820px;
+margin:auto;
+background:#f5f1e7;
+border-radius:18px;
+overflow:hidden;
+box-shadow:0 10px 25px rgba(0,0,0,.25);
+}
+
+.header{
+background:#0d6057;
+color:white;
+padding:14px;
+text-align:center;
+}
+
+.layout{
+display:grid;
+grid-template-columns:180px 1fr;
+}
+
+.sidebar{
+background:#0d6057;
+padding:10px;
+color:white;
+}
+
+.calendar{
+padding:10px;
+overflow-x:auto;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:5px;
+min-width:360px;
+}
+
+.day{
+background:white;
+border-radius:10px;
+padding:6px;
+min-height:65px;
+border:2px solid #ddd;
+cursor:pointer;
+font-size:11px;
+transition:.2s;
+}
+
+.day:hover{
+border-color:#0d6057;
+transform:scale(1.02);
+}
+
+.event{
+background:#2e7d32;
+color:white;
+padding:2px 4px;
+border-radius:6px;
+font-size:8px;
+margin-top:3px;
+}
+
+button,input,textarea,select{
+width:100%;
+padding:8px;
+margin-top:8px;
+border:none;
+border-radius:8px;
+font-size:11px;
+}
+
+button{
+background:#0d6057;
+color:white;
+cursor:pointer;
+}
+
+button:disabled{
+opacity:.6;
+cursor:not-allowed;
+}
+
+.modal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.7);
+display:none;
+justify-content:center;
+align-items:center;
+padding:14px;
+z-index:999;
+}
+
+.modalbox{
+background:white;
+padding:14px;
+border-radius:18px;
+width:90%;
+max-width:650px;
+max-height:90vh;
+overflow:auto;
+}
+
+.main{
+width:35%;
+display:block;
+margin:10px auto;
+border-radius:12px;
+}
+
+.gallery-wrap{
+position:relative;
+margin-top:10px;
+}
+
+.gallery{
+display:flex;
+gap:10px;
+overflow-x:auto;
+scroll-behavior:smooth;
+padding:0 35px;
+}
+
+.gallery img{
+height:150px;
+border-radius:12px;
+flex-shrink:0;
+}
+
+.arrow{
+position:absolute;
+top:50%;
+transform:translateY(-50%);
+width:30px;
+height:30px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+background:#0d6057;
+color:white;
+cursor:pointer;
+z-index:5;
+}
+
+.left{left:0}
+.right{right:0}
+
+iframe{
+width:100%;
+height:400px;
+border:none;
+border-radius:10px;
+margin-top:10px;
+}
+
+@media(max-width:900px){
+
+.layout{
+grid-template-columns:1fr;
+}
+
+.grid{
+grid-template-columns:repeat(7,minmax(45px,1fr));
+}
+
+.day{
+font-size:10px;
+min-height:58px;
+}
+
+.main{
+width:50%;
+}
+
+.gallery img{
+height:110px;
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+<h1>🌿 Calendario Ambiental Firebase PRO</h1>
+</div>
+
+<div class="layout">
+
+<div class="sidebar">
+
+<div style="background:#dcedc8;color:#1b5e20;padding:8px;border-radius:8px;font-size:11px;font-weight:bold">
+🔥 Firebase conectado
+</div>
+
+<button onclick="loginAdmin()">🔐 Administrador</button>
+
+<button id="logoutBtn"
+onclick="logoutAdmin()"
+style="display:none;background:#c62828">
+🚪 Salir
+</button>
+
+</div>
+
+<div class="calendar">
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+<button onclick="changeMonth(-1)">◀</button>
+<h2 id="month"></h2>
+<button onclick="changeMonth(1)">▶</button>
+</div>
+
+<div class="grid" id="calendar"></div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="modal" id="modal">
+<div class="modalbox" id="modalbox"></div>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+addDoc,
+getDocs,
+updateDoc,
+deleteDoc,
+doc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import {
+getStorage,
+ref,
+uploadBytes,
+getDownloadURL
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyBAVbML_9SysLKpkK_dMAnipQ2emKQCBZU",
+authDomain: "calendario-ambiental-48d97.firebaseapp.com",
+projectId: "calendario-ambiental-48d97",
+storageBucket: "calendario-ambiental-48d97.firebasestorage.app",
+messagingSenderId: "956848454278",
+appId: "1:956848454278:web:c69d7eba84ccfc87806f07"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+let current = new Date();
+let events = [];
+let adminMode = false;
+let editId = null;
+let saving = false;
+
+async function loadEvents(){
+
+events=[];
+
+const snapshot = await getDocs(collection(db,"eventos"));
+
+snapshot.forEach((d)=>{
+events.push({
+id:d.id,
+...d.data()
+});
+});
+
+renderCalendar();
+
+}
+
+function renderCalendar(){
+
+const months=[
+"ENERO","FEBRERO","MARZO","ABRIL","MAYO","JUNIO",
+"JULIO","AGOSTO","SEPTIEMBRE","OCTUBRE","NOVIEMBRE","DICIEMBRE"
+];
+
+document.getElementById("month").innerText =
+months[current.getMonth()]+" "+current.getFullYear();
+
+const calendar=document.getElementById("calendar");
+
+calendar.innerHTML="";
+
+const firstDay =
+new Date(current.getFullYear(),current.getMonth(),1).getDay();
+
+const totalDays =
+new Date(current.getFullYear(),current.getMonth()+1,0).getDate();
+
+for(let i=0;i<firstDay;i++){
+calendar.innerHTML += "<div></div>";
+}
+
+for(let d=1; d<=totalDays; d++){
+
+const date =
+current.getFullYear()+"-"+
+String(current.getMonth()+1).padStart(2,"0")+"-"+
+String(d).padStart(2,"0");
+
+const dayEvents = events.filter(e=>e.date===date);
+
+let html="<strong>"+d+"</strong>";
+
+dayEvents.forEach(ev=>{
+html += "<div class='event'>"+ev.title+"</div>";
+});
+
+const div=document.createElement("div");
+
+div.className="day";
+div.innerHTML=html;
+
+div.onclick=()=>openDay(date);
+
+calendar.appendChild(div);
+
+}
+
+}
+
+window.openDay=function(date){
+
+const dayEvents = events.filter(e=>e.date===date);
+
+let content=`<h2>📅 ${date}</h2>`;
+
+if(adminMode){
+
+content += `
+
+<div style='background:#f4faf7;padding:12px;border-radius:10px'>
+
+<h3>➕ Crear Evento</h3>
+
+<input id="title" placeholder="Título">
+
+<input id="date" type="date" value="${date}">
+
+<textarea id="description" placeholder="Descripción"></textarea>
+
+<input id="link" placeholder="URL Facebook, YouTube, Canva, etc">
+
+<label>Foto principal</label>
+<input type="file" id="mainImage" accept="image/*">
+
+<label>Carrusel (orden según carga)</label>
+<input type="file" id="gallery" multiple accept="image/*">
+
+<button id="saveBtn" onclick="saveEvent()">
+Guardar Evento
+</button>
+
+</div>
+`;
+
+}
+
+if(dayEvents.length){
+
+content += "<h3>Eventos del día</h3>";
+
+dayEvents.forEach(ev=>{
+
+content += `
+<div style='background:#f4faf7;padding:12px;border-radius:10px;margin-top:8px'>
+
+<strong>${ev.title}</strong><br><br>
+
+<button onclick='showEvent("${ev.id}")'>
+Ver información
+</button>
+
+</div>
+`;
+
+});
+
+}
+
+if(!dayEvents.length && !adminMode){
+content += "<p>No hay eventos registrados.</p>";
+}
+
+content += `
+<button onclick="closeModal()"
+style="background:#c62828">
+Cerrar
+</button>`;
+
+document.getElementById("modalbox").innerHTML = content;
+
+document.getElementById("modal").style.display="flex";
+
+}
+
+async function uploadImage(file,path){
+
+const storageRef = ref(storage,path);
+
+await uploadBytes(storageRef,file);
+
+return await getDownloadURL(storageRef);
+
+}
+
+window.saveEvent=async function(){
+
+if(saving) return;
+
+saving=true;
+
+const btn=document.getElementById("saveBtn");
+
+if(btn){
+btn.disabled=true;
+btn.innerText="Guardando...";
+}
+
+try{
+
+const title=document.getElementById("title").value.trim();
+
+if(!title){
+
+alert("Escribe un título");
+
+saving=false;
+
+if(btn){
+btn.disabled=false;
+btn.innerText="Guardar Evento";
+}
+
+return;
+
+}
+
+const data={
+title:title,
+date:document.getElementById("date").value,
+description:document.getElementById("description").value,
+link:document.getElementById("link").value,
+createdAt:Date.now()
+};
+
+const mainInput=document.getElementById("mainImage");
+
+if(mainInput.files[0]){
+
+const file=mainInput.files[0];
+
+const path=`principal/${Date.now()}_${file.name}`;
+
+data.main = await uploadImage(file,path);
+
+}
+
+const galleryInput=document.getElementById("gallery");
+
+if(galleryInput.files.length){
+
+data.gallery=[];
+
+for(let i=0;i<galleryInput.files.length;i++){
+
+const file=galleryInput.files[i];
+
+const path=`galeria/${Date.now()}_${i}_${file.name}`;
+
+const url = await uploadImage(file,path);
+
+data.gallery.push({
+url:url,
+order:i
+});
+
+}
+
+}
+
+if(editId){
+
+await updateDoc(doc(db,"eventos",editId),data);
+
+}else{
+
+await addDoc(collection(db,"eventos"),data);
+
+}
+
+await loadEvents();
+
+editId=null;
+
+closeModal();
+
+alert("Evento guardado correctamente");
+
+}catch(error){
+
+console.error(error);
+
+alert("Error: "+error.message);
+
+}
+
+saving=false;
+
+if(btn){
+btn.disabled=false;
+btn.innerText="Guardar Evento";
+}
+
+}
+
+window.showEvent=function(id){
+
+const ev = events.find(e=>e.id===id);
+
+if(!ev) return;
+
+let main="";
+
+if(ev.main){
+
+main=`<img class="main" src="${ev.main}">`;
+
+}
+
+let gallery="";
+
+if(ev.gallery && ev.gallery.length){
+
+const ordered=[...ev.gallery].sort((a,b)=>a.order-b.order);
+
+gallery=`
+<div class='gallery-wrap'>
+
+<div class='arrow left'
+onclick='moveGallery(-1)'>
+❮
+</div>
+
+<div class='gallery' id='galleryTrack'>`;
+
+ordered.forEach(g=>{
+gallery += `<img src="${g.url}">`;
+});
+
+gallery += `</div>
+
+<div class='arrow right'
+onclick='moveGallery(1)'>
+❯
+</div>
+
+</div>`;
+
+}
+
+let media="";
+
+if(ev.link){
+
+if(
+ev.link.includes("facebook.com") ||
+ev.link.includes("fb.watch")
+){
+
+media=`
+<div style="margin-top:10px">
+
+<a href="${ev.link}" target="_blank">
+
+<button>
+Abrir publicación en Facebook
+</button>
+
+</a>
+
+</div>`;
+
+}else if(
+ev.link.includes("youtube.com") ||
+ev.link.includes("youtu.be")
+){
+
+let embed=ev.link
+.replace("watch?v=","embed/")
+.replace("youtu.be/","youtube.com/embed/");
+
+media=`<iframe src="${embed}"></iframe>`;
+
+}else{
+
+media=`
+<a href="${ev.link}" target="_blank">
+
+<button>
+Abrir Recurso
+</button>
+
+</a>`;
+
+}
+
+}
+
+let adminButtons="";
+
+if(adminMode){
+
+adminButtons=`
+
+<hr>
+
+<button onclick='editEvent("${ev.id}")'>
+Editar Evento
+</button>
+
+<button onclick='deleteEvent("${ev.id}")'
+style='background:#c62828'>
+Eliminar Evento
+</button>
+`;
+
+}
+
+document.getElementById("modalbox").innerHTML=`
+
+<h2>${ev.title}</h2>
+
+<p>${ev.description || ""}</p>
+
+${main}
+
+${gallery}
+
+${media}
+
+${adminButtons}
+
+<button onclick="closeModal()"
+style="background:#c62828">
+Cerrar
+</button>
+`;
+
+}
+
+window.editEvent=function(id){
+
+const ev=events.find(e=>e.id===id);
+
+if(!ev) return;
+
+editId=id;
+
+document.getElementById("modalbox").innerHTML=`
+
+<h2>✏ Editar Evento</h2>
+
+<input id="title" value="${ev.title || ""}">
+
+<input id="date" type="date" value="${ev.date || ""}">
+
+<textarea id="description">${ev.description || ""}</textarea>
+
+<input id="link" value="${ev.link || ""}">
+
+<label>Reemplazar foto principal</label>
+<input type="file" id="mainImage" accept="image/*">
+
+<label>Agregar nuevo carrusel</label>
+<input type="file" id="gallery" multiple accept="image/*">
+
+<button id="saveBtn" onclick="saveEvent()">
+Guardar Cambios
+</button>
+
+<button onclick="closeModal()"
+style="background:#c62828">
+Cancelar
+</button>
+`;
+
+}
+
+window.deleteEvent=async function(id){
+
+if(confirm("¿Eliminar evento?")){
+
+await deleteDoc(doc(db,"eventos",id));
+
+await loadEvents();
+
+closeModal();
+
+alert("Evento eliminado");
+
+}
+
+}
+
+window.loginAdmin=function(){
+
+const u=prompt("Usuario");
+const p=prompt("Contraseña");
+
+if(u==="admin" && p==="aula_verde_2026"){
+
+adminMode=true;
+
+document.getElementById("logoutBtn").style.display="block";
+
+alert("Modo administrador activado");
+
+}else{
+
+alert("Credenciales incorrectas");
+
+}
+
+}
+
+window.logoutAdmin=function(){
+
+adminMode=false;
+
+document.getElementById("logoutBtn").style.display="none";
+
+alert("Sesión cerrada");
+
+}
+
+window.changeMonth=function(v){
+
+current.setMonth(current.getMonth()+v);
+
+renderCalendar();
+
+}
+
+window.moveGallery=function(direction){
+
+const gallery=document.getElementById("galleryTrack");
+
+if(gallery){
+gallery.scrollLeft += direction * 260;
+}
+
+}
+
+window.closeModal=function(){
+
+document.getElementById("modal").style.display="none";
+
+}
+
+loadEvents();
+
+</script>
+
+</body>
+</html>
